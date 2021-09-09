@@ -1,15 +1,29 @@
 ## Put comments here that give an overall description of what your
 ## functions do
-
-## Write a short comment describing this function
-
-makeCacheMatrix <- function(x = matrix()) {
-
+##makeCacheMatrix has set, get, setInverse, getInverse
+library(MASS) ##used to calculate inv for non squared matrices as well as square ones
+makeCacheMatrix <- function(x = matrix()){
+  inv <- NULL
+  set <- function(y){
+    x <<- y
+    inv <<- NULL
+  }
+  get <- function() {x}
+  setInverse <- function(inverse){inv <<- inverse}
+  getInverse <- function() {inver<-ginv(x)
+  inver%*%x}
+  list(set = set, get = get, setInverse = setInverse, getInverse = getInverse)
 }
 
-
-## Write a short comment describing this function
-
-cacheSolve <- function(x, ...) {
-        ## Return a matrix that is the inverse of 'x'
+##Used to get cached data
+cacheSolve <- function(x, ...){
+  inv <- x$getInverse()
+  if(!is.null(inv)){
+    message("getting cached data")
+    return(inv)
+  }
+  data <- x$get()
+  inv <- solve(data, ...)
+  x$setInverse(inv)
+  inv
 }
